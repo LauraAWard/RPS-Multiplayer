@@ -45,7 +45,7 @@ $(window).on( "load", function() { //make sure window has finished loading
 
 	rpsDatabase.ref().on("value", function(snapshot) {
 		console.log("data changed");
-		if (snapshot.child("players").exists()) {
+		if (snapshot.child("players").exists() && playerArray.length === 2) {
 		    if (!snapshot.child("players/2").exists() && snapshot.child("turn").exists()) {
 		    	playerStatus = player2.name + " has disconnected.";
 			    console.log(playerStatus);
@@ -67,6 +67,19 @@ $(window).on( "load", function() { //make sure window has finished loading
 		    	 $("#gameMsg").html("Waiting for new player to join.");
 		    }
 		}
+
+		if (playerID === "1" && snapshot.child("players/2").exists()) {
+			player2.name = snapshot.child("players/2").val().name;
+			player2.wins = snapshot.child("players/2").val().wins;
+			player2.losses = snapshot.child("players/2").val().losses;
+		}
+		else if (playerID === "2" && snapshot.child("players/1").exists()) {
+			player1.name = snapshot.child("players/1").val().name;
+			player1.wins = snapshot.child("players/1").val().wins;
+			player1.losses = snapshot.child("players/1").val().losses;
+		}
+
+
 		// rpsDBStatus.OnDisconnect().set(false);
 		// console.log(rpsDBStatus);
 		
@@ -166,9 +179,10 @@ $(window).on( "load", function() { //make sure window has finished loading
 	  		// 	rpsDatabase.ref().set({
 			  //     	chat: playerStatus
 					// });
-
+				// $("#gameMsg").html("A new player has joined the game.");
 	    // When I disconnect, remove this device
 	    		playerIDRef.onDisconnect().remove();
+	    		console.log(playerArray.length);
 	    		// rpsDatabase.ref("turn").remove();
 	    // When I disconnect, update the last time I was seen online
 	    // 		rpsDatabase.ref().onDisconnect().set({
